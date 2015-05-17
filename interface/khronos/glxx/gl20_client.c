@@ -1,3 +1,7 @@
+#include "interface/khronos/glxx/glxx_client.h"
+#include "interface/khronos/include/GLES2/gl2ext.h"
+
+#include "interface/khronos/common/khrn_client_rpc.h"
 
 
 GL_API void GL_APIENTRY glActiveTexture (GLenum texture)
