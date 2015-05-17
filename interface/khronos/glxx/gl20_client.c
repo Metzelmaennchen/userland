@@ -5,7 +5,15 @@
 
 
 extern void set_blend_func (CLIENT_THREAD_STATE_T *thread, GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
+extern void set_error(GLXX_CLIENT_STATE_T *state, GLenum error)
 
+
+#ifndef RPC_DIRECT
+static void read_out_bulk(CLIENT_THREAD_STATE_T *thread, void *out)
+{
+   rpc_recv(thread, out, NULL, (RPC_RECV_FLAG_T)(RPC_RECV_FLAG_BULK | RPC_RECV_FLAG_LEN));
+}
+#endif
 
 GL_API void GL_APIENTRY glActiveTexture (GLenum texture)
 {
