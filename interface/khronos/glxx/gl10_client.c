@@ -5,6 +5,7 @@
 
 
 extern bool is_aligned( GLenum type, size_t value);
+extern void set_error(GLXX_CLIENT_STATE_T *state, GLenum error);
 
 
 GL_API void GL_APIENTRY glActiveTexture (GLenum texture)
@@ -1086,6 +1087,825 @@ GL_API void GL_APIENTRY glGetTexEnvxv (GLenum env, GLenum pname, GLfixed *params
                          RPC_ENUM(env),
                          RPC_ENUM(pname),
                          params);
+   }
+}
+
+GL_API GLboolean GL_APIENTRY glIsEnabled (GLenum cap)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      switch (cap) {
+      case GL_VERTEX_ARRAY:
+      case GL_NORMAL_ARRAY:
+      case GL_COLOR_ARRAY:
+      case GL_POINT_SIZE_ARRAY_OES:
+      case GL_TEXTURE_COORD_ARRAY:
+      case GL_MATRIX_INDEX_ARRAY_OES:
+      case GL_WEIGHT_ARRAY_OES:
+      {
+         GLboolean temp = 0;
+         GLuint count = (GLuint) get_boolean_internal_11(thread, cap, &temp);
+         UNUSED_NDEBUG(count);
+         vcos_assert(count == 1);
+
+         return temp;
+      }
+      default:
+         return RPC_BOOLEAN_RES(RPC_CALL1_RES(glIsEnabled_impl,
+                                              thread,
+                                              GLISENABLED_ID,
+                                              RPC_ENUM(cap)));
+      }
+   }
+
+   return 0;
+}
+
+GL_API void GL_APIENTRY glLightModelf (GLenum pname, GLfloat param)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL2(glLightModelf_impl_11,
+                thread,
+                GLLIGHTMODELF_ID_11,
+                RPC_ENUM(pname),
+                RPC_FLOAT(param));
+   }
+}
+
+GL_API void GL_APIENTRY glLightModelfv (GLenum pname, const GLfloat *params)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      /*
+         the only supported lighting model params are
+
+         LIGHT_MODEL_AMBIENT (4)
+         LIGHT_MODEL_TWO_SIDE (1)
+
+         so we need to transmit 4 words of parameter data
+      */
+
+      RPC_CALL2_IN_CTRL(glLightModelfv_impl_11,
+                        thread,
+                        GLLIGHTMODELFV_ID_11,
+                        RPC_ENUM(pname),
+                        params,
+                        4 * sizeof(GLfloat));
+   }
+}
+
+GL_API void GL_APIENTRY glLightModelx (GLenum pname, GLfixed param)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL2(glLightModelx_impl_11,
+                thread,
+                GLLIGHTMODELX_ID_11,
+                RPC_ENUM(pname),
+                RPC_FIXED(param));
+   }
+}
+
+GL_API void GL_APIENTRY glLightModelxv (GLenum pname, const GLfixed *params)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      /*
+         the only supported lighting model params are
+
+         LIGHT_MODEL_AMBIENT (4)
+         LIGHT_MODEL_TWO_SIDE (1)
+
+         so we need to transmit 4 words of parameter data
+      */
+
+      RPC_CALL2_IN_CTRL(glLightModelxv_impl_11,
+                        thread,
+                        GLLIGHTMODELXV_ID_11,
+                        RPC_ENUM(pname),
+                        params,
+                        4 * sizeof(GLfixed));
+   }
+}
+
+GL_API void GL_APIENTRY glLightf (GLenum light, GLenum pname, GLfloat param)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL3(glLightf_impl_11,
+                thread,
+                GLLIGHTF_ID_11,
+                RPC_ENUM(light),
+                RPC_ENUM(pname),
+                RPC_FLOAT(param));
+   }
+}
+
+GL_API void GL_APIENTRY glLightfv (GLenum light, GLenum pname, const GLfloat *params)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      /*
+         the only supported light params are
+
+         AMBIENT (4)
+         DIFFUSE (4)
+         SPECULAR (4)
+         POSITION (4)
+         SPOT_DIRECTION (3)
+         SPOT_EXPONENT (1)
+         SPOT_CUTOFF (1)
+         CONSTANT_ATTENUATION (1)
+         LINEAR_ATTENUATION (1)
+         QUADRATIC_ATTENUATION (1)
+
+         so we need to transmit 4 words of parameter data
+      */
+
+      RPC_CALL3_IN_CTRL(glLightfv_impl_11,
+                        thread,
+                        GLLIGHTFV_ID_11,
+                        RPC_ENUM(light),
+                        RPC_ENUM(pname),
+                        params,
+                        4 * sizeof(GLfloat));
+   }
+}
+
+GL_API void GL_APIENTRY glLightx (GLenum light, GLenum pname, GLfixed param)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL3(glLightx_impl_11,
+                thread,
+                GLLIGHTX_ID_11,
+                RPC_ENUM(light),
+                RPC_ENUM(pname),
+                RPC_FIXED(param));
+   }
+}
+
+GL_API void GL_APIENTRY glLightxv (GLenum light, GLenum pname, const GLfixed *params)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      /*
+         the only supported light params are
+
+         AMBIENT (4)
+         DIFFUSE (4)
+         SPECULAR (4)
+         POSITION (4)
+         SPOT_DIRECTION (3)
+         SPOT_EXPONENT (1)
+         SPOT_CUTOFF (1)
+         CONSTANT_ATTENUATION (1)
+         LINEAR_ATTENUATION (1)
+         QUADRATIC_ATTENUATION (1)
+
+         so we need to transmit 4 words of parameter data
+      */
+
+      RPC_CALL3_IN_CTRL(glLightxv_impl_11,
+                        thread,
+                        GLLIGHTXV_ID_11,
+                        RPC_ENUM(light),
+                        RPC_ENUM(pname),
+                        params,
+                        4 * sizeof(GLfixed));
+   }
+}
+
+GL_API void GL_APIENTRY glLineWidthx (GLfixed width)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL1(glLineWidthx_impl_11,
+                thread,
+                GLLINEWIDTHX_ID_11,
+                RPC_FIXED(width));
+   }
+}
+
+GL_API void GL_APIENTRY glLoadIdentity (void)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL0(glLoadIdentity_impl_11,
+                thread,
+                GLLOADIDENTITY_ID_11);
+   }
+}
+
+GL_API void GL_APIENTRY glLoadMatrixf (const GLfloat *m)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL1_IN_CTRL(glLoadMatrixf_impl_11,
+                       thread,
+                       GLLOADMATRIXF_ID_11,
+                       m,
+                       16 * sizeof(GLfloat));
+   }
+}
+
+GL_API void GL_APIENTRY glLoadMatrixx (const GLfixed *m)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL1_IN_CTRL(glLoadMatrixx_impl_11,
+                        thread,
+                        GLLOADMATRIXX_ID_11,
+                        m,
+                        16 * sizeof(GLfixed));
+   }
+}
+
+GL_API void GL_APIENTRY glLogicOp (GLenum opcode)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL1(glLogicOp_impl_11,
+                thread,
+                GLLOGICOP_ID_11,
+                RPC_ENUM(opcode));
+   }
+}
+
+GL_API void GL_APIENTRY glMaterialf (GLenum face, GLenum pname, GLfloat param)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL3(glMaterialf_impl_11,
+                thread,
+                GLMATERIALF_ID_11,
+                RPC_ENUM(face),
+                RPC_ENUM(pname),
+                RPC_FLOAT(param));
+   }
+}
+
+GL_API void GL_APIENTRY glMaterialfv (GLenum face, GLenum pname, const GLfloat *params)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      /*
+         the only supported material params are
+
+         AMBIENT (4)
+         DIFFUSE (4)
+         SPECULAR (4)
+         EMISSION (4)
+         SHININESS (1)
+
+         so we need to transmit 4 words of parameter data
+      */
+
+      RPC_CALL3_IN_CTRL(glMaterialfv_impl_11,
+                        thread,
+                        GLMATERIALFV_ID_11,
+                        RPC_ENUM(face),
+                        RPC_ENUM(pname),
+                        params,
+                        4 * sizeof(GLfloat));
+   }
+}
+
+GL_API void GL_APIENTRY glMaterialx (GLenum face, GLenum pname, GLfixed param)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL3(glMaterialx_impl_11,
+                thread,
+                GLMATERIALX_ID_11,
+                RPC_ENUM(face),
+                RPC_ENUM(pname),
+                RPC_FIXED(param));
+   }
+}
+
+GL_API void GL_APIENTRY glMaterialxv (GLenum face, GLenum pname, const GLfixed *params)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      /*
+         the only supported material params are
+
+         AMBIENT (4)
+         DIFFUSE (4)
+         SPECULAR (4)
+         EMISSION (4)
+         SHININESS (1)
+
+         so we need to transmit 4 words of parameter data
+      */
+
+      RPC_CALL3_IN_CTRL(glMaterialxv_impl_11,
+                        thread,
+                        GLMATERIALXV_ID_11,
+                        RPC_ENUM(face),
+                        RPC_ENUM(pname),
+                        params,
+                        4 * sizeof(GLfixed));
+   }
+}
+
+GL_API void GL_APIENTRY glMatrixMode (GLenum mode)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL1(glMatrixMode_impl_11,
+                thread,
+                GLMATRIXMODE_ID_11,
+                RPC_ENUM(mode));
+   }
+}
+
+GL_API void GL_APIENTRY glMultMatrixf (const GLfloat *m)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL1_IN_CTRL(glMultMatrixf_impl_11,
+                        thread,
+                        GLMULTMATRIXF_ID_11,
+                        m,
+                        16 * sizeof(GLfloat));
+   }
+}
+
+GL_API void GL_APIENTRY glMultMatrixx (const GLfixed *m)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL1_IN_CTRL(glMultMatrixx_impl_11,
+                        thread,
+                        GLMULTMATRIXX_ID_11,
+                        m,
+                        16 * sizeof(GLfixed));
+   }
+}
+
+GL_API void GL_APIENTRY glMultiTexCoord4f (GLenum target, GLfloat s, GLfloat t, GLfloat r, GLfloat q)
+{
+   if (target >= GL_TEXTURE0 && target < GL_TEXTURE0 + GL11_CONFIG_MAX_TEXTURE_UNITS) {
+      uint32_t indx = GL11_IX_TEXTURE_COORD + target - GL_TEXTURE0;
+      glintAttrib(GLXX_API_11, indx, s, t, r, q);
+   } else
+      glxx_set_error_api(GLXX_API_11, GL_INVALID_ENUM);
+}
+
+GL_API void GL_APIENTRY glMultiTexCoord4x (GLenum target, GLfixed s, GLfixed t, GLfixed r, GLfixed q)
+{
+   if (target >= GL_TEXTURE0 && target < GL_TEXTURE0 + GL11_CONFIG_MAX_TEXTURE_UNITS) {
+      uint32_t indx = GL11_IX_TEXTURE_COORD + target - GL_TEXTURE0;
+      glintAttrib(GLXX_API_11, indx, fixed_to_float(s), fixed_to_float(t), fixed_to_float(r), fixed_to_float(q));
+   } else
+      glxx_set_error_api(GLXX_API_11, GL_INVALID_ENUM);
+}
+
+GL_API void GL_APIENTRY glNormal3f (GLfloat nx, GLfloat ny, GLfloat nz)
+{
+   glintAttrib(GLXX_API_11, GL11_IX_NORMAL, nx, ny, nz, 0.0f);
+}
+
+GL_API void GL_APIENTRY glNormal3x (GLfixed nx, GLfixed ny, GLfixed nz)
+{
+   glintAttrib(GLXX_API_11, GL11_IX_NORMAL, fixed_to_float(nx), fixed_to_float(ny), fixed_to_float(nz), 0.0f);
+}
+
+static bool is_normal_type(GLenum type)
+{
+   return type == GL_BYTE ||
+          type == GL_SHORT ||
+          type == GL_FIXED ||
+          type == GL_FLOAT;
+}
+
+GL_API void GL_APIENTRY glNormalPointer (GLenum type, GLsizei stride, const GLvoid *pointer)
+{
+   if (is_normal_type(type)) {
+      if (is_aligned(type, (size_t)pointer) && is_aligned(type, (size_t)stride) && stride >= 0) {
+         glintAttribPointer(GLXX_API_11, GL11_IX_NORMAL, 3, type, GL_TRUE, stride, pointer);
+      } else
+         glxx_set_error_api(GLXX_API_11, GL_INVALID_VALUE);
+   } else
+      glxx_set_error_api(GLXX_API_11, GL_INVALID_ENUM);
+}
+
+GL_API void GL_APIENTRY glOrthof (GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL6(glOrthof_impl_11,
+                thread,
+                GLORTHOF_ID_11,
+                RPC_FLOAT(left),
+                RPC_FLOAT(right),
+                RPC_FLOAT(bottom),
+                RPC_FLOAT(top),
+                RPC_FLOAT(zNear),
+                RPC_FLOAT(zFar));
+   }
+}
+
+GL_API void GL_APIENTRY glOrthox (GLfixed left, GLfixed right, GLfixed bottom, GLfixed top, GLfixed zNear, GLfixed zFar)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL6(glOrthox_impl_11,
+                thread,
+                GLORTHOX_ID_11,
+                RPC_FIXED(left),
+                RPC_FIXED(right),
+                RPC_FIXED(bottom),
+                RPC_FIXED(top),
+                RPC_FIXED(zNear),
+                RPC_FIXED(zFar));
+   }
+}
+
+GL_API void GL_APIENTRY glPointParameterf (GLenum pname, GLfloat param)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL2(glPointParameterf_impl_11,
+                thread,
+                GLPOINTPARAMETERF_ID_11,
+                RPC_ENUM(pname),
+                RPC_FLOAT(param));
+   }
+}
+
+GL_API void GL_APIENTRY glPointParameterfv (GLenum pname, const GLfloat *params)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      /*
+         the only supported material params are
+
+         POINT_SIZE_MIN (1)
+         POINT_SIZE_MAX (1)
+         POINT_FADE_THRESHOLD_SIZE (1)
+         POINT_DISTANCE_ATTENUATION (3)
+
+         so we need to transmit 3 words of parameter data
+      */
+
+      RPC_CALL2_IN_CTRL(glPointParameterfv_impl_11,
+                        thread,
+                        GLPOINTPARAMETERFV_ID_11,
+                        RPC_ENUM(pname),
+                        params,
+                        3 * sizeof(GLfloat));
+   }
+}
+
+GL_API void GL_APIENTRY glPointParameterx (GLenum pname, GLfixed param)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL2(glPointParameterx_impl_11,
+                thread,
+                GLPOINTPARAMETERX_ID_11,
+                RPC_ENUM(pname),
+                RPC_FIXED(param));
+   }
+}
+
+GL_API void GL_APIENTRY glPointParameterxv (GLenum pname, const GLfixed *params)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      /*
+         the only supported material params are
+
+         POINT_SIZE_MIN (1)
+         POINT_SIZE_MAX (1)
+         POINT_FADE_THRESHOLD_SIZE (1)
+         POINT_DISTANCE_ATTENUATION (3)
+
+         so we need to transmit 3 words of parameter data
+      */
+
+      RPC_CALL2_IN_CTRL(glPointParameterxv_impl_11,
+                        thread,
+                        GLPOINTPARAMETERXV_ID_11,
+                        RPC_ENUM(pname),
+                        params,
+                        3 * sizeof(GLfixed));
+   }
+}
+
+GL_API void GL_APIENTRY glPointSize (GLfloat size)
+{
+   size = clean_float(size);
+
+   if (size > 0.0f)
+      glintAttrib(GLXX_API_11, GL11_IX_POINT_SIZE, size, 0.0f, 0.0f, 0.0f);
+   else
+      glxx_set_error_api(GLXX_API_11, GL_INVALID_VALUE);
+}
+
+GL_API void GL_APIENTRY glPointSizex (GLfixed size)
+{
+   if (size > 0)
+      glintAttrib(GLXX_API_11, GL11_IX_POINT_SIZE, fixed_to_float(size), 0.0f, 0.0f, 0.0f);
+   else
+      glxx_set_error_api(GLXX_API_11, GL_INVALID_VALUE);
+}
+
+GL_API void GL_APIENTRY glPolygonOffsetx (GLfixed factor, GLfixed units)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL2(glPolygonOffsetx_impl_11,
+                thread,
+                GLPOLYGONOFFSETX_ID_11,
+                RPC_FIXED(factor),
+                RPC_FIXED(units));
+   }
+}
+
+GL_API void GL_APIENTRY glPopMatrix (void)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL0(glPopMatrix_impl_11,
+                thread,
+                GLPOPMATRIX_ID_11);
+   }
+}
+
+GL_API void GL_APIENTRY glPushMatrix (void)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL0(glPushMatrix_impl_11,
+                thread,
+                GLPUSHMATRIX_ID_11);
+   }
+}
+
+GL_API void GL_APIENTRY glRotatef (GLfloat angle, GLfloat x, GLfloat y, GLfloat z)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL4(glRotatef_impl_11,
+                thread,
+                GLROTATEF_ID_11,
+                RPC_FLOAT(angle),
+                RPC_FLOAT(x),
+                RPC_FLOAT(y),
+                RPC_FLOAT(z));
+   }
+}
+
+GL_API void GL_APIENTRY glRotatex (GLfixed angle, GLfixed x, GLfixed y, GLfixed z)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL4(glRotatex_impl_11,
+                thread,
+                GLROTATEX_ID_11,
+                RPC_FIXED(angle),
+                RPC_FIXED(x),
+                RPC_FIXED(y),
+                RPC_FIXED(z));
+   }
+}
+
+GL_API void GL_APIENTRY glSampleCoveragex (GLclampx value, GLboolean invert)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL2(glSampleCoveragex_impl_11,
+                thread,
+                GLSAMPLECOVERAGEX_ID_11,
+                RPC_FIXED(value),
+                RPC_BOOLEAN(invert));
+   }
+}
+
+GL_API void GL_APIENTRY glScalef (GLfloat x, GLfloat y, GLfloat z)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL3(glScalef_impl_11,
+                thread,
+                GLSCALEF_ID_11,
+                RPC_FLOAT(x),
+                RPC_FLOAT(y),
+                RPC_FLOAT(z));
+   }
+}
+
+GL_API void GL_APIENTRY glScalex (GLfixed x, GLfixed y, GLfixed z)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL3(glScalex_impl_11,
+                thread,
+                GLSCALEX_ID_11,
+                RPC_FIXED(x),
+                RPC_FIXED(y),
+                RPC_FIXED(z));
+   }
+}
+
+GL_API void GL_APIENTRY glShadeModel (GLenum mode)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL1(glShadeModel_impl_11,
+                thread,
+                GLSHADEMODEL_ID_11,
+                RPC_ENUM(mode));
+   }
+}
+
+static bool is_texture_coord_size(GLint size)
+{
+   return size == 2 ||
+          size == 3 ||
+          size == 4;
+}
+
+static bool is_texture_coord_type(GLenum type)
+{
+   return type == GL_BYTE ||
+          type == GL_SHORT ||
+          type == GL_FIXED ||
+          type == GL_FLOAT;
+}
+
+GL_API void GL_APIENTRY glTexCoordPointer (GLint size, GLenum type, GLsizei stride, const GLvoid *pointer)
+{
+   if (is_texture_coord_type(type)) {
+      if (is_texture_coord_size(size) && is_aligned(type, (size_t)pointer) && is_aligned(type, (size_t)stride) && stride >= 0) {
+         glintAttribPointer(GLXX_API_11, GL11_IX_CLIENT_ACTIVE_TEXTURE, size, type, GL_FALSE, stride, pointer);
+      } else
+         glxx_set_error_api(GLXX_API_11, GL_INVALID_VALUE);
+   } else
+      glxx_set_error_api(GLXX_API_11, GL_INVALID_ENUM);
+}
+
+GL_API void GL_APIENTRY glTexEnvi (GLenum target, GLenum pname, GLint param)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL3(glTexEnvi_impl_11,
+                thread,
+                GLTEXENVI_ID_11,
+                RPC_ENUM(target),
+                RPC_ENUM(pname),
+                RPC_INT(param));
+   }
+}
+
+GL_API void GL_APIENTRY glTexEnviv (GLenum target, GLenum pname, const GLint *params)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      /*
+         the only supported texture environment params are
+
+         COORD_REPLACE_OES (1)
+         TEXTURE_ENV_MODE (1)
+         TEXTURE_ENV_COLOR (4)
+         COMBINE_RGB (1)
+         RGB_SCALE (1)
+         SRC0_RGB (1)
+         SRC1_RGB (1)
+         SRC2_RGB (1)
+         OPERAND0_RGB (1)
+         OPERAND1_RGB (1)
+         OPERAND2_RGB (1)
+         COMBINE_ALPHA (1)
+         ALPHA_SCALE (1)
+         SRC0_ALPHA (1)
+         SRC1_ALPHA (1)
+         SRC2_ALPHA (1)
+         OPERAND0_ALPHA (1)
+         OPERAND1_ALPHA (1)
+         OPERAND2_ALPHA (1)
+
+         so we need to transmit 4 words of parameter data
+      */
+
+      RPC_CALL3_IN_CTRL(glTexEnviv_impl_11,
+                        thread,
+                        GLTEXENVIV_ID_11,
+                        RPC_ENUM(target),
+                        RPC_ENUM(pname),
+                        params,
+                        4 * sizeof(GLint));
+   }
+}
+
+GL_API void GL_APIENTRY glTexEnvf (GLenum target, GLenum pname, GLfloat param)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL3(glTexEnvf_impl_11,
+                thread,
+                GLTEXENVF_ID_11,
+                RPC_ENUM(target),
+                RPC_ENUM(pname),
+                RPC_FLOAT(param));
+   }
+}
+
+GL_API void GL_APIENTRY glTexEnvfv (GLenum target, GLenum pname, const GLfloat *params)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      /*
+         the only supported texture environment params are
+
+         COORD_REPLACE_OES (1)
+         TEXTURE_ENV_MODE (1)
+         TEXTURE_ENV_COLOR (4)
+         COMBINE_RGB (1)
+         RGB_SCALE (1)
+         SRC0_RGB (1)
+         SRC1_RGB (1)
+         SRC2_RGB (1)
+         OPERAND0_RGB (1)
+         OPERAND1_RGB (1)
+         OPERAND2_RGB (1)
+         COMBINE_ALPHA (1)
+         ALPHA_SCALE (1)
+         SRC0_ALPHA (1)
+         SRC1_ALPHA (1)
+         SRC2_ALPHA (1)
+         OPERAND0_ALPHA (1)
+         OPERAND1_ALPHA (1)
+         OPERAND2_ALPHA (1)
+
+         so we need to transmit 4 words of parameter data
+      */
+
+      RPC_CALL3_IN_CTRL(glTexEnvfv_impl_11,
+                        thread,
+                        GLTEXENVFV_ID_11,
+                        RPC_ENUM(target),
+                        RPC_ENUM(pname),
+                        params,
+                        4 * sizeof(GLfloat));
+   }
+}
+
+GL_API void GL_APIENTRY glTexEnvx (GLenum target, GLenum pname, GLfixed param)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      RPC_CALL3(glTexEnvx_impl_11,
+                thread,
+                GLTEXENVX_ID_11,
+                RPC_ENUM(target),
+                RPC_ENUM(pname),
+                RPC_FIXED(param));
+   }
+}
+
+GL_API void GL_APIENTRY glTexEnvxv (GLenum target, GLenum pname, const GLfixed *params)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_11(thread)) {
+      /*
+         the only supported texture environment params are
+
+         COORD_REPLACE_OES (1)
+         TEXTURE_ENV_MODE (1)
+         TEXTURE_ENV_COLOR (4)
+         COMBINE_RGB (1)
+         RGB_SCALE (1)
+         SRC0_RGB (1)
+         SRC1_RGB (1)
+         SRC2_RGB (1)
+         OPERAND0_RGB (1)
+         OPERAND1_RGB (1)
+         OPERAND2_RGB (1)
+         COMBINE_ALPHA (1)
+         ALPHA_SCALE (1)
+         SRC0_ALPHA (1)
+         SRC1_ALPHA (1)
+         SRC2_ALPHA (1)
+         OPERAND0_ALPHA (1)
+         OPERAND1_ALPHA (1)
+         OPERAND2_ALPHA (1)
+
+         so we need to transmit 4 words of parameter data
+      */
+
+      RPC_CALL3_IN_CTRL(glTexEnvxv_impl_11,
+                        thread,
+                        GLTEXENVXV_ID_11,
+                        RPC_ENUM(target),
+                        RPC_ENUM(pname),
+                        params,
+                        4 * sizeof(GLfixed));
    }
 }
 
