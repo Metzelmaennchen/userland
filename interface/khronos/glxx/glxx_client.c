@@ -704,6 +704,24 @@ GL_API void GL_APIENTRY glDeleteBuffers (GLsizei n, const GLuint *buffers)
    }
 }
 
+static bool is_aligned( GLenum type, size_t value)
+{
+   switch (type) {
+   case GL_BYTE:
+   case GL_UNSIGNED_BYTE:
+      return GL_TRUE;
+   case GL_SHORT:
+   case GL_UNSIGNED_SHORT:
+      return (value & 1) == 0;
+   case GL_FIXED:
+   case GL_FLOAT:
+      return (value & 3) == 0;
+   default:
+      UNREACHABLE();
+      return GL_FALSE;
+   }
+}
+
 GL_API void GL_APIENTRY glDeleteTextures (GLsizei n, const GLuint *textures)
 {
    CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
