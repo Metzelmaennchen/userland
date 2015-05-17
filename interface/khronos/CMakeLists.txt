@@ -37,7 +37,11 @@ set(EGL_SOURCE
    ext/gl_oes_framebuffer_object.c
    ext/gl_oes_map_buffer.c
    ext/gl_oes_matrix_palette_client.c)
-set(GLES_SOURCE
+set(GLES1_SOURCE
+   glxx/gl10_client.c
+   glxx/glxx_client.c)
+set(GLES2_SOURCE
+   glxx/gl20_client.c
    glxx/glxx_client.c)
 set(VG_SOURCE
    vg/vg_client.c
@@ -56,18 +60,21 @@ set(CLIENT_SOURCE
    common/khrn_client_cache.c)
 
 add_library(EGL ${SHARED} ${EGL_SOURCE})
-add_library(GLESv2 ${SHARED} ${GLES_SOURCE})
+add_library(GLESv1 ${SHARED} ${GLES1_SOURCE})
+add_library(GLESv2 ${SHARED} ${GLES2_SOURCE})
 add_library(OpenVG ${SHARED} ${VG_SOURCE})
 add_library(WFC ${SHARED} ${WFC_SOURCE})
 add_library(khrn_client ${CLIENT_SOURCE})
 
 # TODO do we need EGL_static and GLESv2_static now that khrn_static exists?
 add_library(EGL_static STATIC ${EGL_SOURCE})
-add_library(GLESv2_static STATIC ${GLES_SOURCE})
+add_library(GLESv1_static STATIC ${GLES1_SOURCE})
+add_library(GLESv2_static STATIC ${GLES2_SOURCE})
 add_library(khrn_static STATIC
    ${EGL_SOURCE} ${GLES_SOURCE} ${VG_SOURCE} ${WFC_SOURCE} ${CLIENT_SOURCE})
 
 target_link_libraries(EGL khrn_client vchiq_arm vcos bcm_host -lm)
+target_link_libraries(GLESv1 EGL khrn_client vcos)
 target_link_libraries(GLESv2 EGL khrn_client vcos)
 target_link_libraries(WFC EGL)
 target_link_libraries(OpenVG EGL)

@@ -196,79 +196,6 @@ static void buffer_info_delete(GLXX_CLIENT_STATE_T *state, GLuint buffer)
    }
 }
 
-GL_API void GL_APIENTRY glActiveTexture (GLenum texture)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_11(thread)) {
-      GLXX_CLIENT_STATE_T *state = GLXX_GET_CLIENT_STATE(thread);
-
-      if (texture >= GL_TEXTURE0 && texture < GL_TEXTURE0 + GL11_CONFIG_MAX_TEXTURE_UNITS)
-         state->active_texture.server = texture;
-
-      RPC_CALL1(glActiveTexture_impl,
-                thread,
-                GLACTIVETEXTURE_ID,
-                RPC_ENUM(texture));
-   }
-
-   if (IS_OPENGLES_20(thread)) {
-      RPC_CALL1(glActiveTexture_impl,
-                thread,
-                GLACTIVETEXTURE_ID,
-                RPC_ENUM(texture));
-   }
-}
-
-GL_API void GL_APIENTRY glAlphaFunc (GLenum func, GLclampf ref)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_11(thread)) {
-      RPC_CALL2(glAlphaFunc_impl_11,
-                thread,
-                GLALPHAFUNC_ID_11,
-                RPC_ENUM(func),
-                RPC_FLOAT(ref));
-   }
-}
-
-GL_API void GL_APIENTRY glAlphaFuncx (GLenum func, GLclampx ref)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_11(thread)) {
-      RPC_CALL2(glAlphaFuncx_impl_11,
-                thread,
-                GLALPHAFUNCX_ID_11,
-                RPC_ENUM(func),
-                RPC_FIXED(ref));
-   }
-}
-
-GL_API void GL_APIENTRY glAttachShader (GLuint program, GLuint shader)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_20(thread)) {
-      RPC_CALL2(glAttachShader_impl_20,
-                thread,
-                GLATTACHSHADER_ID_20,
-                RPC_UINT(program),
-                RPC_UINT(shader));
-   }
-}
-
-GL_API void GL_APIENTRY glBindAttribLocation (GLuint program, GLuint index, const char *name)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_20(thread)) {
-      RPC_CALL3_IN_BULK(glBindAttribLocation_impl_20,
-                        thread,
-                        GLBINDATTRIBLOCATION_ID_20,
-                        RPC_UINT(program),
-                        RPC_UINT(index),
-                        name,
-                        strlen(name) + 1);
-   }
-}
-
 GL_API void GL_APIENTRY glBindBuffer (GLenum target, GLuint buffer)
 {
    CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
@@ -311,20 +238,6 @@ GL_API void GL_APIENTRY glBindTexture (GLenum target, GLuint texture)
    }
 }
 
-GL_API void GL_APIENTRY glBlendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha) // S
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_20(thread)) {
-      RPC_CALL4(glBlendColor_impl_20,
-                thread,
-                GLBLENDCOLOR_ID_20,
-                RPC_FLOAT(red),
-                RPC_FLOAT(green),
-                RPC_FLOAT(blue),
-                RPC_FLOAT(alpha));
-   }
-}
-
 GL_API void GL_APIENTRY glBlendEquation( GLenum mode ) // S
 {
    glBlendEquationSeparate(mode, mode);
@@ -356,12 +269,6 @@ GL_API void GL_APIENTRY glBlendFunc (GLenum sfactor, GLenum dfactor)
 {
    CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
    if (IS_OPENGLES_11_OR_20(thread)) set_blend_func(thread, sfactor, dfactor, sfactor, dfactor);
-}
-
-GL_API void GL_APIENTRY glBlendFuncSeparate (GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha) // S
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_20(thread)) set_blend_func(thread, srcRGB, dstRGB, srcAlpha, dstAlpha);
 }
 
 GL_API void GL_APIENTRY glBufferData (GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage)
