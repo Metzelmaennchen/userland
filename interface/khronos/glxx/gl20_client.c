@@ -110,4 +110,125 @@ GL_API void GL_APIENTRY glDeleteShader (GLuint shader)
    }
 }
 
+GL_API void GL_APIENTRY glDetachShader (GLuint program, GLuint shader)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_20(thread)) {
+      RPC_CALL2(glDetachShader_impl_20,
+                thread,
+                GLDETACHSHADER_ID_20,
+                RPC_UINT(program),
+                RPC_UINT(shader));
+   }
+}
+
+GL_APICALL void GL_APIENTRY glGetActiveAttrib (GLuint program, GLuint index, GLsizei bufsize, GLsizei *length, GLint *size, GLenum *type, char *name)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_20(thread)) {
+#ifdef RPC_DIRECT
+      RPC_CALL7(glGetActiveAttrib_impl_20, thread, no_id, program, index, bufsize, length, size, type, name);
+#else
+      GLuint result[3];
+
+      rpc_begin(thread);
+
+      RPC_CALL4_OUT_CTRL(no_function,
+                         thread,
+                         GLGETACTIVEATTRIB_ID_20,
+                         RPC_UINT(program),
+                         RPC_UINT(index),
+                         RPC_SIZEI(bufsize),
+                         result);
+
+      if (length)
+         *length = (GLsizei)result[0];
+      if (size)
+         *size = (GLint)result[1];
+      if (type)
+         *type = (GLenum)result[2];
+
+      read_out_bulk(thread, name);
+
+      rpc_end(thread);
+#endif
+   }
+}
+
+GL_APICALL void GL_APIENTRY glGetActiveUniform (GLuint program, GLuint index, GLsizei bufsize, GLsizei *length, GLint *size, GLenum *type, char *name)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_20(thread)) {
+#ifdef RPC_DIRECT
+      RPC_CALL7(glGetActiveUniform_impl_20, thread, no_id, program, index, bufsize, length, size, type, name);
+#else
+      GLuint result[3];
+
+      rpc_begin(thread);
+
+      RPC_CALL4_OUT_CTRL(no_function,
+                         thread,
+                         GLGETACTIVEUNIFORM_ID_20,
+                         RPC_UINT(program),
+                         RPC_UINT(index),
+                         RPC_SIZEI(bufsize),
+                         result);
+
+      if (length)
+         *length = (GLsizei)result[0];
+      if (size)
+         *size = (GLint)result[1];
+      if (type)
+         *type = (GLenum)result[2];
+
+      read_out_bulk(thread, name);
+
+      rpc_end(thread);
+#endif
+   }
+}
+
+GL_APICALL void GL_APIENTRY glGetAttachedShaders (GLuint program, GLsizei maxcount, GLsizei *count, GLuint *shaders)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_20(thread)) {
+#ifdef RPC_DIRECT
+   RPC_CALL4(glGetAttachedShaders_impl_20, thread, no_id, program, maxcount, count, shaders);
+#else
+   GLuint i;
+
+   GLuint result[3];
+
+   RPC_CALL3_OUT_CTRL(no_function,
+                      thread,
+                      GLGETATTACHEDSHADERS_ID_20,
+                      RPC_UINT(program),
+                      RPC_SIZEI(maxcount),
+                      result);
+
+   if (count)
+      *count = (GLsizei) result[0];
+
+   for (i = 0; i < 2; i++)
+      if ((GLuint)maxcount > i && result[0] > i)
+         shaders[i] = result[i + 1];
+#endif
+   }
+}
+
+GL_APICALL int GL_APIENTRY glGetAttribLocation (GLuint program, const char *name)
+{
+   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
+   if (IS_OPENGLES_20(thread)) {
+      return RPC_INT_RES(RPC_CALL2_IN_BULK_RES(glGetAttribLocation_impl_20,
+                                               thread,
+                                               GLGETATTRIBLOCATION_ID_20,
+                                               RPC_UINT(program),
+                                               name,
+                                               strlen(name) + 1));
+   }
+
+   return 0;
+}
+
 

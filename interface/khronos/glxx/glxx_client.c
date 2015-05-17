@@ -779,30 +779,6 @@ GL_API void GL_APIENTRY glDepthRangef (GLclampf zNear, GLclampf zFar)
    }
 }
 
-GL_API void GL_APIENTRY glDepthRangex (GLclampx zNear, GLclampx zFar)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_11(thread)) {
-      RPC_CALL2(glDepthRangex_impl_11,
-                thread,
-                GLDEPTHRANGEX_ID_11,
-                RPC_FIXED(zNear),
-                RPC_FIXED(zFar));
-   }
-}
-
-GL_API void GL_APIENTRY glDetachShader (GLuint program, GLuint shader)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_20(thread)) {
-      RPC_CALL2(glDetachShader_impl_20,
-                thread,
-                GLDETACHSHADER_ID_20,
-                RPC_UINT(program),
-                RPC_UINT(shader));
-   }
-}
-
 GL_API void GL_APIENTRY glDisable (GLenum cap)
 {
    CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
@@ -812,43 +788,6 @@ GL_API void GL_APIENTRY glDisable (GLenum cap)
                 GLDISABLE_ID,
                 RPC_ENUM(cap));
    }
-}
-
-static void set_enabled_11(GLenum array, GLboolean enabled)
-{
-   switch (array) {
-   case GL_VERTEX_ARRAY:
-      glintAttribEnable(GLXX_API_11, GL11_IX_VERTEX, enabled);
-      break;
-   case GL_NORMAL_ARRAY:
-      glintAttribEnable(GLXX_API_11, GL11_IX_NORMAL, enabled);
-      break;
-   case GL_COLOR_ARRAY:
-      glintAttribEnable(GLXX_API_11, GL11_IX_COLOR, enabled);
-      break;
-   case GL_POINT_SIZE_ARRAY_OES:
-      glintAttribEnable(GLXX_API_11, GL11_IX_POINT_SIZE, enabled);
-      break;
-#if GL_OES_matrix_palette
-   case GL_MATRIX_INDEX_ARRAY_OES:
-      glintAttribEnable(GLXX_API_11, GL11_IX_MATRIX_INDEX, enabled);
-      break;
-   case GL_WEIGHT_ARRAY_OES:
-      glintAttribEnable(GLXX_API_11, GL11_IX_MATRIX_WEIGHT, enabled);
-      break;
-#endif
-   case GL_TEXTURE_COORD_ARRAY:
-      glintAttribEnable(GLXX_API_11, GL11_IX_CLIENT_ACTIVE_TEXTURE, enabled);
-      break;
-   default:
-      glxx_set_error_api(GLXX_API_11, GL_INVALID_ENUM);
-      break;
-   }
-}
-
-GL_API void GL_APIENTRY glDisableClientState (GLenum array)
-{
-   set_enabled_11(array, GL_FALSE);
 }
 
 GL_APICALL void GL_APIENTRY glDisableVertexAttribArray (GLuint index)
@@ -1109,11 +1048,6 @@ GL_API void GL_APIENTRY glEnable (GLenum cap)
    }
 }
 
-GL_API void GL_APIENTRY glEnableClientState (GLenum array)
-{
-   set_enabled_11(array, GL_TRUE);
-}
-
 GL_APICALL void GL_APIENTRY glEnableVertexAttribArray (GLuint index)
 {
    glintAttribEnable(GLXX_API_20, index, GL_TRUE);
@@ -1151,80 +1085,6 @@ GL_API void GL_APIENTRY glFlush (void)
    RPC_FLUSH(thread);
 }
 
-GL_API void GL_APIENTRY glFogf (GLenum pname, GLfloat param)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_11(thread)) {
-      RPC_CALL2(glFogf_impl_11,
-                thread,
-                GLFOGF_ID_11,
-                RPC_ENUM(pname),
-                RPC_FLOAT(param));
-   }
-}
-
-GL_API void GL_APIENTRY glFogfv (GLenum pname, const GLfloat *params)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_11(thread)) {
-      /*
-         the only supported fog params are
-
-         FOG_MODE (1)
-         FOG_DENSITY (1)
-         FOG_START (1)
-         FOG_END (1)
-         FOG_COLOR (4)
-
-         so we need to transmit 4 words of parameter data
-      */
-
-      RPC_CALL2_IN_CTRL(glFogfv_impl_11,
-                        thread,
-                        GLFOGFV_ID_11,
-                        RPC_ENUM(pname),
-                        params,
-                        4 * sizeof(GLfloat));
-   }
-}
-
-GL_API void GL_APIENTRY glFogx (GLenum pname, GLfixed param)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_11(thread)) {
-      RPC_CALL2(glFogx_impl_11,
-               thread,
-               GLFOGX_ID_11,
-               RPC_ENUM(pname),
-               RPC_FIXED(param));
-   }
-}
-
-GL_API void GL_APIENTRY glFogxv (GLenum pname, const GLfixed *params)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_11(thread)) {
-      /*
-         the only supported fog params are
-
-         FOG_MODE (1)
-         FOG_DENSITY (1)
-         FOG_START (1)
-         FOG_END (1)
-         FOG_COLOR (4)
-
-         so we need to transmit 4 words of parameter data
-      */
-
-      RPC_CALL2_IN_CTRL(glFogxv_impl_11,
-                        thread,
-                        GLFOGXV_ID_11,
-                        RPC_ENUM(pname),
-                        params,
-                        4 * sizeof(GLfixed));
-   }
-}
-
 GL_API void GL_APIENTRY glFrontFace (GLenum mode)
 {
    CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
@@ -1233,38 +1093,6 @@ GL_API void GL_APIENTRY glFrontFace (GLenum mode)
                 thread,
                 GLFRONTFACE_ID,
                 RPC_ENUM(mode));
-   }
-}
-
-GL_API void GL_APIENTRY glFrustumf (GLfloat left, GLfloat right, GLfloat bottom, GLfloat top, GLfloat zNear, GLfloat zFar)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_11(thread)) {
-      RPC_CALL6(glFrustumf_impl_11,
-                thread,
-                GLFRUSTUMF_ID_11,
-                RPC_FLOAT(left),
-                RPC_FLOAT(right),
-                RPC_FLOAT(bottom),
-                RPC_FLOAT(top),
-                RPC_FLOAT(zNear),
-                RPC_FLOAT(zFar));
-   }
-}
-
-GL_API void GL_APIENTRY glFrustumx (GLfixed left, GLfixed right, GLfixed bottom, GLfixed top, GLfixed zNear, GLfixed zFar)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_11(thread)) {
-      RPC_CALL6(glFrustumx_impl_11,
-                thread,
-                GLFRUSTUMX_ID_11,
-                RPC_FIXED(left),
-                RPC_FIXED(right),
-                RPC_FIXED(bottom),
-                RPC_FIXED(top),
-                RPC_FIXED(zNear),
-                RPC_FIXED(zFar));
    }
 }
 
@@ -1310,115 +1138,6 @@ GL_API void GL_APIENTRY glGenTextures (GLsizei n, GLuint *textures)
          n -= batch;
       } while (n > 0);
    }
-}
-
-GL_APICALL void GL_APIENTRY glGetActiveAttrib (GLuint program, GLuint index, GLsizei bufsize, GLsizei *length, GLint *size, GLenum *type, char *name)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_20(thread)) {
-#ifdef RPC_DIRECT
-      RPC_CALL7(glGetActiveAttrib_impl_20, thread, no_id, program, index, bufsize, length, size, type, name);
-#else
-      GLuint result[3];
-
-      rpc_begin(thread);
-
-      RPC_CALL4_OUT_CTRL(no_function,
-                         thread,
-                         GLGETACTIVEATTRIB_ID_20,
-                         RPC_UINT(program),
-                         RPC_UINT(index),
-                         RPC_SIZEI(bufsize),
-                         result);
-
-      if (length)
-         *length = (GLsizei)result[0];
-      if (size)
-         *size = (GLint)result[1];
-      if (type)
-         *type = (GLenum)result[2];
-
-      read_out_bulk(thread, name);
-
-      rpc_end(thread);
-#endif
-   }
-}
-
-GL_APICALL void GL_APIENTRY glGetActiveUniform (GLuint program, GLuint index, GLsizei bufsize, GLsizei *length, GLint *size, GLenum *type, char *name)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_20(thread)) {
-#ifdef RPC_DIRECT
-      RPC_CALL7(glGetActiveUniform_impl_20, thread, no_id, program, index, bufsize, length, size, type, name);
-#else
-      GLuint result[3];
-
-      rpc_begin(thread);
-
-      RPC_CALL4_OUT_CTRL(no_function,
-                         thread,
-                         GLGETACTIVEUNIFORM_ID_20,
-                         RPC_UINT(program),
-                         RPC_UINT(index),
-                         RPC_SIZEI(bufsize),
-                         result);
-
-      if (length)
-         *length = (GLsizei)result[0];
-      if (size)
-         *size = (GLint)result[1];
-      if (type)
-         *type = (GLenum)result[2];
-
-      read_out_bulk(thread, name);
-
-      rpc_end(thread);
-#endif
-   }
-}
-
-GL_APICALL void GL_APIENTRY glGetAttachedShaders (GLuint program, GLsizei maxcount, GLsizei *count, GLuint *shaders)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_20(thread)) {
-#ifdef RPC_DIRECT
-   RPC_CALL4(glGetAttachedShaders_impl_20, thread, no_id, program, maxcount, count, shaders);
-#else
-   GLuint i;
-
-   GLuint result[3];
-
-   RPC_CALL3_OUT_CTRL(no_function,
-                      thread,
-                      GLGETATTACHEDSHADERS_ID_20,
-                      RPC_UINT(program),
-                      RPC_SIZEI(maxcount),
-                      result);
-
-   if (count)
-      *count = (GLsizei) result[0];
-
-   for (i = 0; i < 2; i++)
-      if ((GLuint)maxcount > i && result[0] > i)
-         shaders[i] = result[i + 1];
-#endif
-   }
-}
-
-GL_APICALL int GL_APIENTRY glGetAttribLocation (GLuint program, const char *name)
-{
-   CLIENT_THREAD_STATE_T *thread = CLIENT_GET_THREAD_STATE();
-   if (IS_OPENGLES_20(thread)) {
-      return RPC_INT_RES(RPC_CALL2_IN_BULK_RES(glGetAttribLocation_impl_20,
-                                               thread,
-                                               GLGETATTRIBLOCATION_ID_20,
-                                               RPC_UINT(program),
-                                               name,
-                                               strlen(name) + 1));
-   }
-
-   return 0;
 }
 
 /*
